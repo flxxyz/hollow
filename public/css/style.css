@@ -1,0 +1,70 @@
+::selection {
+    background:rgba(0,200,255,0.6);
+}
+@font-face {
+    font-family: XiaoBoZhezhi;
+    src: url('https://static.flxxyz.com/font/HYXiuYingTiJ.ttf')
+}
+
+body {
+    font-family: "XiaoBoZhezhi";
+    overflow-x: hidden;
+    color: #ffb3b3;
+}
+
+.w-80 {
+    width: 80%;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.bg-1 {
+    background: #FD9191;
+}
+.bg-2 {
+    background: #FDDD8A;
+}
+.bg-3 {
+    background: #FFDAB9;
+}
+
+.title, .subtitle {
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: normal;
+}
+.subtitle {
+    font-size: 1rem;
+}
+.subtitle img {
+    width: 32px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+}
+
+.say {
+    width: 80%;
+    margin: -65px 10% 0;
+    position: absolute;
+}
+
+.love {
+    margin: 6px 24px;
+}
+.card {
+    margin: 10px 0;
+}
+.card-content {
+    position: relative;
+    z-index: 1000;
+}
+.card-footer-item {
+    padding: 0;
+    margin-top: -38px;
+}
+.clear-border-radius {
+    border-radius: 0;
+}

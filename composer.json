@@ -1,0 +1,21 @@
+{
+  "name": "flxxyz/LoveHub",
+  "description": "send too love",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "flxxyz",
+      "email": "i@0bug.work"
+    }
+  ],
+  "require": {
+    "flxxyz/col": "^0.0.6",
+    "vrana/notorm": "dev-master"
+  },
+  "repositories": {
+    "packagist": {
+      "type": "composer",
+      "url": "https://packagist.phpcomposer.com"
+    }
+  }
+}
