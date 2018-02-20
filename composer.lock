@@ -4,26 +4,26 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "13146433671bd0c2b38ff894155d5acf",
+    "content-hash": "27474c29d89c15a8927c2f9ae7aa4bd4",
     "packages": [
         {
             "name": "flxxyz/col",
-            "version": "0.0.6",
+            "version": "0.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/flxxyz/Col.git",
-                "reference": "f0aa447978528d9a982a4c8e53bca4edbd24490d"
+                "reference": "f1d00a129c97d758f397f62a1ae97a63242a63e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://files.phpcomposer.com/files/flxxyz/Col/f0aa447978528d9a982a4c8e53bca4edbd24490d.zip",
-                "reference": "f0aa447978528d9a982a4c8e53bca4edbd24490d",
+                "url": "https://files.phpcomposer.com/files/flxxyz/Col/f1d00a129c97d758f397f62a1ae97a63242a63e2.zip",
+                "reference": "f1d00a129c97d758f397f62a1ae97a63242a63e2",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.0",
                 "php-curl-class/php-curl-class": "^8.0",
-                "vrana/notorm": "dev-master@dev"
+                "vrana/notorm": "dev-master"
             },
             "type": "library",
             "autoload": {
@@ -51,7 +51,7 @@
                 "php",
                 "简单框架"
             ],
-            "time": "2018-02-05T03:24:41+00:00"
+            "time": "2018-02-05T05:49:12+00:00"
         },
         {
             "name": "php-curl-class/php-curl-class",

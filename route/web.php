@@ -1,21 +1,20 @@
 <?php
 
 use App\Controller\{
-    IndexController, LoveController
+    Controller, LoveController, ApiController, ImgController, LikeController
 };
 
-$route->get('/', [IndexController::class, 'index']);
-$route->get('/say', [LoveController::class, 'say']);
+$route->group('/', function () {
+    $this->get('/', [LoveController::class, 'index']);
+    $this->get('/say', [LoveController::class, 'say']);
+    $this->get('/s/?', [new LoveController, 'show']);
+    $this->get('/pic/?', [new ImgController, 'qq']);
+});
 
 $route->group('/api', function () {
-    $this->get('/say', function () {
-        $data = [
-            'code'  => 1,
-            'message' => 'success',
-            'data'    => [],
-        ];
-        return json($data);
-    });
+    $this->any('/say', [ApiController::class, 'say']);
+    $this->post('/like/?/add', [LikeController::class, 'add']);
+    $this->get('/like/?/get', [LikeController::class, 'get']);
 });
 
 $route->any('*', function () {

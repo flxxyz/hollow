@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use Col\Controller as BaseController;
 
+require_once APP_DIR . 'function.php';
+
 class Controller extends BaseController
 {
     public $id;
@@ -18,7 +20,7 @@ class Controller extends BaseController
         session()->reset();
     }
 
-    public function json(string $msg = '', int $code = 200, $result = [])
+    public function json(string $msg = '', $result = [], int $code = 200)
     {
         $data = [
             'message' => $msg,
@@ -27,8 +29,12 @@ class Controller extends BaseController
 
         if ($code === 200) {
             $data['data'] = $result;
+        }else {
+            $data['data'] = [];
         }
 
+        header("Access-Control-Allow-Origin: {$this->config['url']}");
+        header('Content-type: application/json;charset=utf-8');
         exit(json($data));
     }
 }

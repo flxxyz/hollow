@@ -9,8 +9,13 @@
     }
   ],
   "require": {
-    "flxxyz/col": "^0.0.6",
+    "flxxyz/col": "*",
     "vrana/notorm": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
   },
   "repositories": {
     "packagist": {

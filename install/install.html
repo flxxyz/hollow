@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>安装界面</title>
+</head>
+<body>
+<form action="#" method="post">
+    <div>
+        <label for="host">数据库地址</label>
+        <input id="host" name="host" type="text" value="<?php echo ($host=='')?'localhost':$host ?>"><span><?php echo $host ?></span>
+    </div>
+    <div>
+        <label for="port">数据库端口</label>
+        <input id="port" name="port" type="text" value="3306"><span><?php echo $port ?></span>
+    </div>
+    <div>
+        <label for="database">数据库库名</label>
+        <input id="database" name="database" type="text" value="love"><span><?php echo $database ?></span>
+    </div>
+    <div>
+        <label for="username">数据库用户</label>
+        <input id="username" name="username" type="text" value=""><span><?php echo $username ?></span>
+    </div>
+    <div>
+        <label for="password">数据库密码</label>
+        <input id="password" name="password" type="text" value=""><span><?php echo $password ?></span>
+    </div>
+    <div>
+        <label for="perfix">数据库表前缀</label>
+        <input id="perfix" name="perfix" type="text" value="love_">
+    </div>
+    <div><button type="submit">开始安装</button></div>
+</form>
+</body>
+</html>
