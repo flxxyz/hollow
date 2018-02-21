@@ -171,12 +171,10 @@
     </div>
     <script>
         (function () {
-            $('form').submit(function () {
-                return false;
-            })
-            $('.field .control input.required').bind('change blur', input_common);
-            $('.field .control input').bind('change', input_common);
-            $('.field .control textarea').bind('change blur', input_common);
+            no_sub();
+            $('.field .control input.required').bind('change blur', is_input);
+            $('.field .control input').bind('change', is_input);
+            $('.field .control textarea').bind('change blur', is_input);
             $('#send').click(function () {
                 $('.field>.control>.required').each(function (i, e) {
                     var m = $(e), p = m.parent().next();
@@ -186,27 +184,17 @@
 
                 if (($(".required[name=from]").val() === '') || ($(".required[name=to]").val() === '') || ($(".required[name=content]").val() === '')) return;
 
-                submit();
-                $('body,html').animate({scrollTop: 0}, 1000);
-            });
-            $('.anonymous').click(function () {
-                btn_click_common('anonymous', '你想匿名发给Ta吗?', '匿名发给Ta吧');
-            });
-            $('.hide').click(function () {
-                btn_click_common('hide', '你想隐藏内容吗?', '隐藏内容让Ta猜猜看~');
-            });
-
-            function submit() {
                 $.ajax({
                     url: '/api/say',
                     type: 'post',
                     dataType: 'json',
                     data: $('form').serialize(),
                     success: function (data) {
-                        check_message();
+                        if ($(".message").length > 0)
+                            return;
                         var msg = data.message;
                         var header_p = $('<p>').text(msg);
-                        var header_del = $('<button>').addClass('delete').attr('aria-label', 'delete');
+                        var header_del = $('<button>').addClass('delete exit').attr('aria-label', 'delete');
                         var header = $('<div>').addClass('message-header');
                         var body = $('<div>').addClass('message-body');
                         var article = $('<article>').addClass('message');
@@ -222,13 +210,16 @@
                             header.append(header_del, header_p);
                             article.addClass('is-warning').append(header, body);
                             $('.love').prepend(article);
-                            add_del();
+                            is_remove_btn(function () {
+                                $('.message').remove();
+                            });
                         }
                     },
                     error: function (err) {
-                        check_message();
+                        if ($(".message").length > 0)
+                            return;
                         var header_p = $('<p>').text('发布失败');
-                        var header_del = $('<button>').addClass('delete').attr('aria-label', 'delete');
+                        var header_del = $('<button>').addClass('delete exit').attr('aria-label', 'delete');
                         var header = $('<div>').addClass('message-header');
                         var body = $('<div>').addClass('message-body');
                         var article = $('<article>').addClass('message');
@@ -236,46 +227,19 @@
                         body.append('Σ(っ °Д °;)っ你的表白好像被未知生物吃掉了');
                         article.addClass('is-warning').append(header, body);
                         $('.love').prepend(article);
-                        add_del();
+                        is_remove_btn(function () {
+                            $('.message').remove();
+                        });
                     }
                 });
-            }
-
-            function add_del() {
-                $('.delete').click(function () {
-                    $('.message').remove();
-                });
-            }
-
-            function check_message() {
-                if ($(".message").length > 0)
-                    return;
-            }
-
-            function input_common() {
-                var m = $(this), parent = m.parent(), p = parent.next();
-                if (m.val() == '') {
-                    m.addClass('is-danger');
-                    if (m.hasClass('required'))
-                        p.addClass('is-danger').text(p.data('content'));
-                    return;
-                }
-
-                m.removeClass('is-danger').addClass('is-success');
-                if (m.hasClass('required'))
-                    p.removeClass('is-danger').text('');
-            }
-
-            function btn_click_common(a, b, c) {
-                var e = $(this), remove = 'is-primary', add = 'is-danger', text = b, ca = 'fa-question-circle',
-                    cr = 'fa-check-circle', v = 0;
-                if (e.hasClass('is-danger'))
-                    add = 'is-primary', remove = 'is-danger', text = c, ca = 'fa-check-circle', cr = 'fa-question-circle', v = 1;
-                e.removeClass(remove).addClass(add);
-                e.find('.text').text(text);
-                e.find('i').removeClass(cr).addClass(ca);
-                $('input[name=' + a + ']').val(v);
-            }
+                $('body,html').animate({scrollTop: 0}, 1000);
+            });
+            $('.anonymous').click(function () {
+                is_click_btn('anonymous', '你想匿名发给Ta吗?', '匿名发给Ta吧');
+            });
+            $('.hide').click(function () {
+                is_click_btn('hide', '你想隐藏内容吗?', '隐藏内容让Ta猜猜看~');
+            });
         })()
     </script>
 <?php view('layout/footer'); ?>

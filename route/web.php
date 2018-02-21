@@ -1,20 +1,21 @@
 <?php
 
 use App\Controller\{
-    Controller, LoveController, ApiController, ImgController, LikeController
+    LoveController, ApiController, ImgController, LikeController
 };
 
 $route->group('/', function () {
     $this->get('/', [LoveController::class, 'index']);
     $this->get('/say', [LoveController::class, 'say']);
-    $this->get('/s/?', [new LoveController, 'show']);
-    $this->get('/pic/?', [new ImgController, 'qq']);
+    $this->get('/s/?', [LoveController::class, 'show']);
+    $this->get('/pic/?', [ImgController::class, 'qq']);
 });
 
 $route->group('/api', function () {
     $this->any('/say', [ApiController::class, 'say']);
     $this->post('/like/?/add', [LikeController::class, 'add']);
     $this->get('/like/?/get', [LikeController::class, 'get']);
+    $this->any('/comment', [ApiController::class, 'comment']);
 });
 
 $route->any('*', function () {

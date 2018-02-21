@@ -66,12 +66,15 @@ view('layout/header', [
                 <div class="modal">
                     <div class="modal-background"></div>
                     <div class="modal-card">
-                        <header class="modal-card-head">
-                            <p class="modal-card-title">评论 <span class="at"></span></p>
-                            <button class="delete" aria-label="close"></button>
-                        </header>
-                        <section class="modal-card-body">
-                            <form>
+                        <form>
+                            <header class="modal-card-head">
+                                <p class="modal-card-title">评论 <span class="at"></span></p>
+                                <button class="delete exit" aria-label="close"></button>
+                                <input type="hidden" name="pid">
+                                <input type="hidden" name="id" value="<?php _e($explain['hash']) ?>">
+                            </header>
+                            <section class="modal-card-body">
+                                <p class="edit">你好, <span class="username"></span> <a>修改</a></p>
                                 <div class="field">
                                     <div class="control">
                                         <input class="input required" name="from" type="text" placeholder="你的名称">
@@ -103,12 +106,13 @@ view('layout/header', [
                                     </div>
                                     <p class="help" data-content="请填入内容"></p>
                                 </div>
-                            </form>
-                        </section>
-                        <footer class="modal-card-foot">
-                            <button class="button is-success">发送</button>
-                            <button class="button" type="reset">重置</button>
-                        </footer>
+                            </section>
+                            <footer class="modal-card-foot">
+                                <button class="button is-success" id="send">发送</button>
+                                <button class="button exit">关闭</button>
+                                <span class="tips"></span>
+                            </footer>
+                        </form>
                     </div>
                 </div>
                 <ul class="c-XN">
@@ -121,8 +125,8 @@ view('layout/header', [
                     if ($comment_status): ?>
                         <h3 class="margin-bottom">评论列表</h3>
                         <?php foreach ($comment as $item): ?>
-                            <li id="u<?php _e($item['id']) ?>" class="c-XN-li border-small border-bottom">
-                                <a href="#u<?php _e($item['id']) ?>" class="author <?php
+                            <li id="comment-<?php _e($item['id']) ?>" class="c-XN-li border-small border-bottom">
+                                <a href="#comment-<?php _e($item['id']) ?>" class="author <?php
                                 switch ($item['sex']) {
                                     case 0:
                                         echo 'text-venus';
@@ -160,9 +164,9 @@ view('layout/header', [
                                     <hr class="border-small border-bottom">
                                     <ul>
                                         <?php foreach ($item['children'] as $k => $v): ?>
-                                            <li id="u<?php _e($v['id']) ?>"
+                                            <li id="comment-<?php _e($v['id']) ?>"
                                                 class="c-XN-li <?php _e(($k != (count($item['children']) - 1)) ? 'border-small border-bottom' : '') ?>">
-                                                <a href="#u<?php _e($v['id']) ?>" class="author <?php
+                                                <a href="#comment-<?php _e($v['id']) ?>" class="author <?php
                                                 switch ($v['sex']) {
                                                     case 0:
                                                         echo 'text-venus';
@@ -194,7 +198,8 @@ view('layout/header', [
                                                 <p class="content"><?php _e($v['content']) ?></p>
                                                 <div class="foot">
                                                     <span class="time"><?php _e($v['ctime']) ?></span>
-                                                    <span class="reply" data-id="<?php _e($v['id']) ?>" data-reply="1">回复</span>
+                                                    <span class="reply" data-id="<?php _e($item['id']) ?>"
+                                                          data-reply="<?php _e($v['id']) ?>">回复</span>
                                                 </div>
                                             </li>
                                         <?php endforeach; ?>
@@ -213,21 +218,65 @@ view('layout/header', [
     </div>
     <script>
         (function () {
-            like_ajax('get', 'get', $('.heart'));
+            like_ajax('get', 'get');
             $('.heart').click(function () {
-                like_ajax('add', 'post', $(this));
+                like_ajax('add', 'post');
             });
-            $('.comment').click(function () {
-                active_model();
-            });
-            $('.delete').click(function () {
+            init_comment();
+            is_remove_btn(function () {
                 $('.modal').removeClass('is-active');
-            })
-            $('.reply').each(function (i, e) {
-                comment(e);
-            })
+            });
+            $('.modal-background').click(function () {
+                $('.modal').removeClass('is-active');
+            });
+            no_sub();
+            $('.field .control input.required').bind('change blur', is_input);
+            $('.field .control input').bind('change', is_input);
+            $('.field .control textarea').bind('change blur', is_input);
+            $('#send').click(function () {
+                $('.field>.control>.required').each(function (i, e) {
+                    var m = $(e), p = m.parent().next();
+                    if (m.val() === '')
+                        m.addClass('is-danger'), p.addClass('is-danger').text(p.data('content'));
+                })
 
-            function like_ajax(n, t, e) {
+                if (($(".required[name=from]").val() === '') || ($(".required[name=content]").val() === '')) return;
+
+                save_user();
+
+                var t = $("textarea[name=content]").val();
+                $("textarea[name=content]").val(t.replace(_id, user));
+
+                $.ajax({
+                    url: '/api/comment',
+                    type: 'post',
+                    dataType: 'json',
+                    data: $('form').serialize(),
+                    success: function (data) {
+                        if (data.code != 200) {
+                            $('.tips').attr('class', 'tips text-dot').text('评论失败');
+                            return;
+                        }
+
+                        $('.tips').attr('class', 'tips has-text-success').text(data.message);
+                        setTimeout(function () {
+                            $('.modal').removeClass('is-active');
+                            $('.c-XN').html(data.data);
+                            init_comment_reply();
+                        }, 1000);
+                    },
+                    error: function (err) {
+                        $('.tips').attr('class', 'text-dot').text('评论失败');
+                    }
+                });
+            });
+            $('.edit a').click(function () {
+                $('.edit').hide();
+                show_user_event();
+            });
+            var _id='',user='';
+
+            function like_ajax(n, t) {
                 $.ajax({
                     url: '/api/like/<?php _e($explain['hash']) ?>/' + n,
                     type: t,
@@ -237,29 +286,76 @@ view('layout/header', [
                             $('.fa-heart').removeClass('far').addClass('fas');
                         }
                         data = data.data;
-                        e.find('.heart-rate').text(data.total);
+                        $('.heart').find('.heart-rate').text(data.total);
                     },
-                    error: function (err) {
+                })
+            }
 
+            function init_comment() {
+                comment($('.comment'));
+                init_comment_reply();
+            }
+
+            function init_comment_reply() {
+                $('.reply').each(function (i, e) {
+                    comment($(e));
+                });
+            }
+
+            function comment(e) {
+                e.click(function () {
+                    clear_user();
+                    set_user();
+                    is_user();
+                    is_modal();
+                    var m = $('.modal'), e = $(this), id = e.data('id'), reply = e.data('reply'), text = '';
+                    if (typeof e.data('reply') !== 'undefined') {
+                        _id = '#comment-' + reply;
+                        text = '@' + $(_id + ' .name').text();
+                        user = '<a href="'+_id+'">'+text+'</a>';
                     }
-                })
-            }
-
-            function comment(el) {
-                $(el).click(function () {
-                    active_model();
-                    var m = $('.modal'), e = $(this), id = e.data('id'), text = '';
-                    if (typeof e.data('reply') !== 'undefined')
-                        text = '@' + $('#u' + id + ' .name').text();
+                    $('input[name=pid]').val(id);
                     m.find('.at').text(text);
-                    m.find('.textarea').val(text + ' ');
-                    console.log($(this).removeStorage('aaa'));
+                    m.find('.textarea').val(text);
                 })
             }
 
-            function active_model() {
-                var m = $('.modal');
-                m.hasClass('is-active') ? m.removeClass('is-active') : m.addClass('is-active');
+            function save_user() {
+                $(this).storage('username', $('input[name=from]').val());
+                $(this).storage('sex', $('.select select').val());
+                $(this).storage('qq', $('input[name=qq]').val());
+            }
+
+            function is_user() {
+                ($(this).storage('username') !== null && $(this).storage('sex') !== null) ? hide_user_event() : show_user_event();
+            }
+
+            function clear_user() {
+                $('.tips').text('');
+                $('input[name=from]').val('');
+                $('.select select').val(0);
+                $('input[name=qq]').val('');
+            }
+
+            function set_user() {
+                $('input[name=from]').val($(this).storage('username'));
+                $('.select select').val($(this).storage('sex'));
+                $('input[name=qq]').val($(this).storage('qq'));
+            }
+
+            function show_user_event() {
+                $('.edit').hide();
+                $('input[name=from]').parent().parent().show();
+                $('.select select').parent().parent().show();
+                $('input[name=qq]').parent().parent().show();
+            }
+
+            function hide_user_event() {
+                $('.edit').show();
+                $('.edit .username').text($(this).storage('username'));
+                $('input[name=from]').parent().parent().hide();
+                $('.select select').parent().parent().hide();
+                $('input[name=qq]').parent().parent().hide();
             }
         })()
     </script>

@@ -23,8 +23,8 @@ class LoveController extends Controller
             $like = $likes->where('explain_id', $data[$i]['eid'])->fetch();
             $total = $like['total'] ?? 0;
             $data[$i]['total'] = $total;
-            $data[$i]['qq'] = $data[$i]['qq'] ?? '1547755744';
-            $data[$i]['img'] = $this->config['url'] . 'pic/' . bit($data[$i]['qq']);
+            $data[$i]['qq'] = $data[$i]['qq'] == '' ? null : $data[$i]['qq'];
+            $data[$i]['img'] = is_null($data[$i]['qq']) ? '/img/default.png' : $this->config['url'] . 'pic/' . bit($data[$i]['qq']);
             $data[$i]['ctime'] = format_date($data[$i]['ctime']);
         }
 
@@ -55,8 +55,8 @@ class LoveController extends Controller
         }
 
         $explain = $explain->select('id, user_from, user_to, content, qq, anonymous, hide, hash, created_time as ctime')->fetch();
-        $explain['qq'] = $explain['qq'] ?? '1547755744';
-        $explain['img'] = $this->config['url'] . 'pic/' . bit($explain['qq']);
+        $explain['qq'] = $explain['qq'] == '' ? null : $explain['qq'];
+        $explain['img'] = is_null($explain['qq']) ? '/img/default.png' : $this->config['url'] . 'pic/' . bit($explain['qq']);
         $explain['ctime'] = format_date($explain['ctime']);
 
         $comment = DB('comments')->where('explain_id', $explain['id'])->order('created_time asc');

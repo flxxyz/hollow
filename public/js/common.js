@@ -26,3 +26,42 @@
 
     $.fn.extend(methods);
 })(jQuery)
+
+function no_sub() {
+    $('form').submit(function () {
+        return false;
+    })
+}
+
+function is_modal() {
+    var m = $('.modal');m.hasClass('is-active') ? m.removeClass('is-active') : m.addClass('is-active');
+}
+
+function is_input() {
+    var m = $(this), parent = m.parent(), p = parent.next();
+    if (m.val() == '') {
+        m.addClass('is-danger');
+        if (m.hasClass('required'))
+            p.addClass('is-danger').text(p.data('content'));
+        return;
+    }
+
+    m.removeClass('is-danger').addClass('is-success');
+    if (m.hasClass('required'))
+        p.removeClass('is-danger').text('');
+}
+
+function is_click_btn(a, b, c) {
+    var e = $(this), remove = 'is-primary', add = 'is-danger', text = b, ca = 'fa-question-circle',
+        cr = 'fa-check-circle', v = 0;
+    if (e.hasClass('is-danger'))
+        add = 'is-primary', remove = 'is-danger', text = c, ca = 'fa-check-circle', cr = 'fa-question-circle', v = 1;
+    e.removeClass(remove).addClass(add);
+    e.find('.text').text(text);
+    e.find('i').removeClass(cr).addClass(ca);
+    $('input[name=' + a + ']').val(v);
+}
+
+function is_remove_btn(callback) {
+    $('.exit').click(callback);
+}
