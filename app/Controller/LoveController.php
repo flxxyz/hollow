@@ -6,29 +6,27 @@ class LoveController extends Controller
 {
     public function index()
     {
-        $explain = DB('explains')->order('ctime desc')->select('id as eid, user_from, user_to, content, qq, anonymous, hide, hash, created_time as ctime');
-        $data = $explain;
-        for ($i = 0; $i < count($data); $i++) {
+        $explain = DB('explains')->order('created_time desc');
+        $count = $explain->count();
+        $data = [];
+        foreach ($explain as $id => $item) {
+            $content = $item['content'];
             if (0) {
-                $data[$i]['content'] = '**************';
+                $content = '**************';
             } else {
-                $content = $data[$i]['content'];
-                if (mb_strlen($content) > 21) {
-                    $content = msubstr($data[$i]['content'], 0, 21);
-                }
-                $data[$i]['content'] = $content;
+                if (mb_strlen($content) > 21)
+                    $content = msubstr($item['content'], 0, 21);
             }
 
-            $likes = DB('likes');
-            $like = $likes->where('explain_id', $data[$i]['eid'])->fetch();
-            $total = $like['total'] ?? 0;
-            $data[$i]['total'] = $total;
-            $data[$i]['qq'] = $data[$i]['qq'] == '' ? null : $data[$i]['qq'];
-            $data[$i]['img'] = is_null($data[$i]['qq']) ? '/img/default.png' : $this->config['url'] . 'pic/' . bit($data[$i]['qq']);
-            $data[$i]['ctime'] = format_date($data[$i]['ctime']);
+            $like = DB('likes')->where('explain_id', $item['id'])->fetch();
+            $item['total'] = $like['total'];
+            $item['img'] = $this->pic($item['qq']);
+            $item['ctime'] = format_date($item['created_time']);
+            $item['content'] = $content;
+            $data[] = $item;
         }
+        unset($explain, $item);
 
-        $count = $explain->count();
         view('love/index', [
             'data'  => $data,
             'count' => $count,
@@ -37,10 +35,9 @@ class LoveController extends Controller
 
     public function say()
     {
-        $key = $this->config['key'];
-        $token = md5(time() . $key);
-        $effect = get_array(DB('resources')->where('type', '1')->select('id, name'));
-        $bg = get_array(DB('resources')->where('type', '2')->select('id, name'));
+        $effect = DB('resources')->where('type', '1')->select('id, name');
+        $bg = DB('resources')->where('type', '2')->select('id, name');
+
         view('love/say', [
             'effect' => $effect,
             'bg'     => $bg,
@@ -49,15 +46,14 @@ class LoveController extends Controller
 
     public function show($id)
     {
-        $explain = DB('explains')->where('hash', $id);
-        if (count($explain) < 1) {
+        $count = DB('explains')->where('hash', $id)->count();
+        if ($count <= 0) {
             return redirect('/');
         }
 
-        $explain = $explain->select('id, user_from, user_to, content, qq, anonymous, hide, hash, created_time as ctime')->fetch();
-        $explain['qq'] = $explain['qq'] == '' ? null : $explain['qq'];
-        $explain['img'] = is_null($explain['qq']) ? '/img/default.png' : $this->config['url'] . 'pic/' . bit($explain['qq']);
-        $explain['ctime'] = format_date($explain['ctime']);
+        $explain = DB('explains')->where('hash', $id)->fetch();
+        $explain['img'] = $this->pic($explain['qq']);
+        $explain['ctime'] = format_date($explain['created_time']);
 
         $comment = DB('comments')->where('explain_id', $explain['id'])->order('created_time asc');
         $new_comment = [];
@@ -67,8 +63,8 @@ class LoveController extends Controller
                 'explain_id' => $item['explain_id'],
                 'pid'        => $item['pid'],
                 'name'       => $item['name'],
-                'content'       => $item['content'],
-                'qq'         => $this->config['url'] . 'pic/' . bit($item['qq'] ?? '1547755744'),
+                'content'    => $item['content'],
+                'qq'         => $this->pic($item['qq']),
                 'sex'        => $item['sex'],
                 'ip'         => $item['ip'],
                 'ctime'      => format_date($item['created_time']),
@@ -77,8 +73,7 @@ class LoveController extends Controller
         $tree = createTree($new_comment, [['id' => null]]);
         $comment = $tree[0];
         unset($tree, $new_comment);
-//        echo '<pre>';
-//        exit(print_r($comment));
+
         view('love/show', [
             'title'   => $explain['user_from'] . '想对' . $explain['user_to'] . '说',
             'explain' => $explain,

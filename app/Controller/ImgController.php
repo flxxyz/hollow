@@ -22,7 +22,13 @@ class ImgController extends Controller
         $result = curl_exec($ch);
         ob_end_clean();
         curl_close($ch);
+
+        $offset = 30 * 60 * 60 * 24; // 一个月
+        $cache = gmdate("D, d M Y H:i:s", time() + $offset);
+        header("Pragma: cache");
+        header("Cache-Control: max-age={$offset}");
+        header("Expires: {$cache} GMT");
         header('Content-Type: image/jpeg');
-        echo $result;
+        exit($result);
     }
 }

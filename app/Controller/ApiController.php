@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Col\Common\Hash;
+
 class ApiController extends Controller
 {
     public function say()
@@ -42,6 +44,7 @@ class ApiController extends Controller
         DB('likes')->insert([
             'explain_id' => $result['id'],
         ]);
+
         $hash = $result['hash'];
         $data = [
             'id'      => $hash,
@@ -58,12 +61,12 @@ class ApiController extends Controller
 
         $body = $this->post();
 
-        $explain = DB('explains')->where('hash', $body['id'])->select('id');
-        if (count($explain) <= 0) {
+        $count = DB('explains')->where('hash', $body['id'])->count();
+        if ($count <= 0) {
             $this->json('传递错误的参数', '', 100);
         }
         unset($body['id']);
-        $explain = $explain->fetch();
+        $explain = DB('explains')->where('hash', $body['id'])->select('id')->fetch();
         $body['explain_id'] = $explain['id'];
 
         if (!$body['qq']) {
@@ -91,7 +94,7 @@ class ApiController extends Controller
                 'explain_id' => $item['explain_id'],
                 'pid'        => $item['pid'],
                 'name'       => $item['name'],
-                'content'       => $item['content'],
+                'content'    => $item['content'],
                 'qq'         => $this->config['url'] . 'pic/' . bit($item['qq'] ?? '1547755744'),
                 'sex'        => $item['sex'],
                 'ip'         => $item['ip'],
@@ -153,6 +156,7 @@ EOT;
     </div>
 </li>
 EOT;
+                    unset($sex_color_item, $sex_icon_item, $border);
                 }
                 $children .= '</ul>';
             }
@@ -171,9 +175,42 @@ EOT;
     {$children}
 </li>
 EOT;
+            unset($sex_color, $sex_icon, $children, $item);
         }
 
         $this->json('评论成功', $data);
+    }
+
+    public function login()
+    {
+        $body = $this->post();
+
+        $username = $body['username'];
+        $password = $body['password'];
+
+        $users = DB('users');
+        if ($users->where('username', $username)->count() <= 0) {
+            if ($users->where('phone', $username)->count() <= 0) {
+                $this->json('对不起，账户不存在', '', 100);
+            }else {
+                $user = $users->where('phone', $username)->fetch();
+            }
+        } else {
+            $user = $users->where('username', $username)->fetch();
+        }
+        unset($users);
+
+        if (!Hash::check($password, $user['password'])) {
+            $this->json('对不起，密码不正确', '', 100);
+        }
+
+        session()->set(['is_login' => 1]);
+        session()->set(['id' => $user['uid']]);
+        session()->set(['name' => $user['username']]);
+
+        $this->json('登陆成功', [
+            'url' => "/u/profile",
+        ]);
     }
 
     private function post()
@@ -220,10 +257,10 @@ EOT;
         $str = str_replace("&nbsp;", "", $str);
         $str = str_replace("&quot;", "", $str);
         $str = str_replace("&quot;", "", $str);
-//        $str = str_replace("(", "（", $str);
-//        $str = str_replace(")", "）", $str);
-//        $str = str_replace(",", "，", $str);
-//        $str = str_replace(";", "；", $str);
+        //        $str = str_replace("(", "（", $str);
+        //        $str = str_replace(")", "）", $str);
+        //        $str = str_replace(",", "，", $str);
+        //        $str = str_replace(";", "；", $str);
         return $str;
     }
 }
