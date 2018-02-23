@@ -101,12 +101,13 @@ class ApiController extends Controller
         if ($count <= 0) {
             $this->json('传递错误的参数', '', 100);
         }
-        unset($body['id']);
+
         /**
          * 取出当前表白
          */
         $explain = DB('explains')->where('hash', $body['id'])->select('id')->fetch();
         $body['explain_id'] = $explain['id'];
+        unset($body['id']);
 
         if (!$body['qq']) {
             $body['qq'] = null;

@@ -218,7 +218,7 @@
                             header.append(header_del, header_p);
                             body.append(data.message);
                             article.addClass('is-warning').append(header, body);
-                            $('.love').html('').prepend(article);
+                            $('.love').prepend(article);
                             is_remove_btn(function () {
                                 $('.message').remove();
                             });
@@ -233,7 +233,7 @@
                         header.append(header_del, header_p);
                         body.append('Σ(っ °Д °;)っ你的表白好像被怪兽吃掉了');
                         article.addClass('is-warning').append(header, body);
-                        $('.love').html('').prepend(article);
+                        $('.love').prepend(article);
                         is_remove_btn(function () {
                             $('.message').remove();
                         });
