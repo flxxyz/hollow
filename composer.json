@@ -1,6 +1,8 @@
 {
   "name": "flxxyz/LoveHub",
-  "description": "send too love",
+  "keywords": ["想大声说爱你", "想对你说", "我爱你", "表白墙", "love"],
+  "description": "如果您的过去我没有赶上，我也不会插足您的未来",
+  "homepage": "https://love.toyou.ren/about",
   "license": "MIT",
   "authors": [
     {
@@ -10,7 +12,9 @@
   ],
   "require": {
     "flxxyz/col": "*",
-    "vrana/notorm": "dev-master"
+    "vrana/notorm": "dev-master",
+    "yzalis/identicon": "^1.2",
+    "monolog/monolog": "^1.23"
   },
   "autoload": {
     "psr-4": {

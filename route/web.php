@@ -1,7 +1,7 @@
 <?php
 
 use App\Controller\{
-    LoveController, ApiController, ImgController, LikeController
+    LoveController, ApiController, ImgController, LikeController, UserController
 };
 
 $route->group('/', function () {
@@ -11,11 +11,17 @@ $route->group('/', function () {
     $this->get('/pic/?', [ImgController::class, 'qq']);
 });
 
+$route->group('/user', function () {
+    $this->any('/login', [UserController::class, 'login']);
+    $this->get('/profile', [UserController::class, 'profile']);
+});
+
 $route->group('/api', function () {
     $this->any('/say', [ApiController::class, 'say']);
     $this->post('/like/?/add', [LikeController::class, 'add']);
     $this->get('/like/?/get', [LikeController::class, 'get']);
     $this->any('/comment', [ApiController::class, 'comment']);
+    $this->any('/login', [ApiController::class, 'login']);
 });
 
 $route->any('*', function () {

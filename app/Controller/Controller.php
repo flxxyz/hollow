@@ -66,7 +66,12 @@ class Controller extends BaseController
         exit(json($data));
     }
 
+    /**
+     * 输出头像
+     * @param $qq
+     * @return string
+     */
     protected function pic($qq) {
-        return is_null($qq == '' ? null : $qq) ? '/img/default.png' : $this->config['url'] . 'pic/' . bit($qq ?? '1547755744');
+        return is_null($qq == '' ? null : $qq) ? ($this->config['random_avatar'] ? ImgController::identicon() : '/img/default.png') : $this->config['url'] . 'pic/' . bit($qq ?? '1547755744');
     }
 }

@@ -2,8 +2,19 @@
 
 namespace App\Controller;
 
+use Identicon\Identicon;
+
+/**
+ * 头像类
+ * Class ImgController
+ * @package App\Controller
+ */
 class ImgController extends Controller
 {
+    /**
+     * qq头像
+     * @param $id
+     */
     public function qq($id)
     {
         $qq = bit($id, true);
@@ -30,5 +41,18 @@ class ImgController extends Controller
         header("Expires: {$cache} GMT");
         header('Content-Type: image/jpeg');
         exit($result);
+    }
+
+    /**
+     * 随机头像
+     * @return string
+     */
+    public static function identicon()
+    {
+        $identicon = new Identicon();
+        //$identicon->displayImage($this->session->name);
+        //$imageData = $identicon->getImageData('bar');
+        $imageDataUri = $identicon->getImageDataUri(md5(microtime(true) . mt_rand(1, 9999)));
+        return $imageDataUri;
     }
 }

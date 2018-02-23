@@ -144,14 +144,14 @@
                 </div>
                 <div class="field">
                     <div class="control">
-                        <input class="input" name="qq" type="text" placeholder="TA的QQ号（选填）">
+                        <input class="input" name="qq" type="text" placeholder="你的QQ号（选填, 可管理表白）">
                     </div>
                 </div>
-                <div class="field">
+                <!--div class="field">
                     <div class="control">
                         <input class="input" name="phone" type="text" placeholder="你的手机号（选填）">
                     </div>
-                </div>
+                </div-->
                 <div class="field">
                     <div class="control">
                             <textarea class="textarea required" name="content" rows="5"
@@ -182,7 +182,10 @@
                         m.addClass('is-danger'), p.addClass('is-danger').text(p.data('content'));
                 })
 
-                if (($(".required[name=from]").val() === '') || ($(".required[name=to]").val() === '') || ($(".required[name=content]").val() === '')) return;
+                var from = $(".required[name=from]").val().length;
+                var to = $(".required[name=to]").val().length;
+                var content = $(".required[name=content]").val().length;
+                if ((from < 2 && from > 16) || (to < 2 && to > 16) || (content < 1)) return;
 
                 $.ajax({
                     url: '/api/say',
@@ -190,8 +193,6 @@
                     dataType: 'json',
                     data: $('form').serialize(),
                     success: function (data) {
-                        if ($(".message").length > 0)
-                            return;
                         var msg = data.message;
                         var header_p = $('<p>').text(msg);
                         var header_del = $('<button>').addClass('delete exit').attr('aria-label', 'delete');
@@ -199,34 +200,40 @@
                         var body = $('<div>').addClass('message-body');
                         var article = $('<article>').addClass('message');
                         if (data.code == 200) {
+
                             data = data.data;
                             var url = data.url;
                             header.append(header_p);
-                            var body_a = $('<a>').attr('href', url).text('查看发布的表白');
-                            body.append(body_a);
+                            var body_s = '<p><a href="'+url+'">查看发布的表白</a></p>';
+                            var body_l = '';
+                            var qq = $('input[name=qq]').val();
+                            if(qq.length >= 5 && qq.length <= 15) {
+                                body_l = '<p><a href="/user/login">登录管理表白</a></p>';
+                                $(this).storage('qq', qq);
+                            }
+                            body.html(body_s + body_l);
                             article.addClass('is-success').append(header, body);
                             $('.love').html('').append(article);
                         } else {
                             header.append(header_del, header_p);
+                            body.append(data.message);
                             article.addClass('is-warning').append(header, body);
-                            $('.love').prepend(article);
+                            $('.love').html('').prepend(article);
                             is_remove_btn(function () {
                                 $('.message').remove();
                             });
                         }
                     },
                     error: function (err) {
-                        if ($(".message").length > 0)
-                            return;
                         var header_p = $('<p>').text('发布失败');
                         var header_del = $('<button>').addClass('delete exit').attr('aria-label', 'delete');
                         var header = $('<div>').addClass('message-header');
                         var body = $('<div>').addClass('message-body');
                         var article = $('<article>').addClass('message');
                         header.append(header_del, header_p);
-                        body.append('Σ(っ °Д °;)っ你的表白好像被未知生物吃掉了');
+                        body.append('Σ(っ °Д °;)っ你的表白好像被怪兽吃掉了');
                         article.addClass('is-warning').append(header, body);
-                        $('.love').prepend(article);
+                        $('.love').html('').prepend(article);
                         is_remove_btn(function () {
                             $('.message').remove();
                         });

@@ -27,6 +27,8 @@ class LoveController extends Controller
         }
         unset($explain, $item);
 
+        header("Pragma: no-cache");
+        header("Cache-Control: no-cache");
         view('love/index', [
             'data'  => $data,
             'count' => $count,
