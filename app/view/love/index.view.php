@@ -3,7 +3,7 @@
     <div class="header">
         <div class="hero-head is-centered">
             <a href="/"><img class="w-100" src="/img/background.png"/></a>
-            <a class="button is-info say" href="<?php _e(url('say')) ?>">想跟你说</a>
+            <a class="button is-info say" href="/say">想跟你说</a>
         </div>
         <div class="tags is-right">
             <span>有&nbsp;</span><span class="tag is-danger"><?php _e(($count > 999) ? '999+' : $count) ?></span><span>&nbsp;条表白了呢~</span>
@@ -14,9 +14,6 @@
             <div class="card">
                 <?php if(1): ?><a href="/s/<?php _e($v['hash']) ?>"><?php endif; ?>
                 <div class="card-content bg-1">
-                    <!--p class="info">
-                        <time><?php _e($v['ctime']) ?></time>
-                    </p-->
                     <p class="title">
                         <?php _e($v['content']) ?>
                     </p>

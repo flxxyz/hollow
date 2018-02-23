@@ -76,6 +76,8 @@ class LoveController extends Controller
         $comment = $tree[0];
         unset($tree, $new_comment);
 
+        header("Pragma: no-cache");
+        header("Cache-Control: no-cache");
         view('love/show', [
             'title'   => $explain['user_from'] . '想对' . $explain['user_to'] . '说',
             'explain' => $explain,

@@ -289,6 +289,7 @@ EOT;
         session()->set(['is_login' => 1]);
         session()->set(['id' => $user['uid']]);
         session()->set(['name' => $user['username']]);
+        session()->set(['group' => $user['faction']]);
 
         /**
          * 更新登录时间

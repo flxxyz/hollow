@@ -12,7 +12,11 @@ $route->group('/', function () {
 });
 
 $route->group('/user', function () {
-    $this->any('/login', [UserController::class, 'login']);
+    $this->get('/', function () {
+        redirect('/user/login');
+    });
+    $this->get('/login', [UserController::class, 'login']);
+    $this->get('/logout', [UserController::class, 'logout']);
     $this->get('/profile', [UserController::class, 'profile']);
 });
 

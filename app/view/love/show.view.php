@@ -13,7 +13,7 @@ view('layout/header', [
         <div class="header">
             <div class="hero-head is-centered">
                 <a href="/"><img class="w-100" src="/img/background.png"/></a>
-                <a class="button is-info say bg-yellow-light text-yellow" href="<?php _e(url('say')) ?>">想跟你说</a>
+                <a class="button is-info say bg-yellow-light text-yellow" href="/say">想跟你说</a>
             </div>
             <div class="tags is-right">
                 <nav class="breadcrumb is-small" aria-label="breadcrumbs">
