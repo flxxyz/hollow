@@ -144,7 +144,7 @@ class ApiController extends Controller
                 'pid'        => $item['pid'],
                 'name'       => $item['name'],
                 'content'    => $item['content'],
-                'qq'         => $this->config['url'] . 'pic/' . bit($item['qq'] ?? '1547755744'),
+                'qq'         => $this->pic($item['qq']),
                 'sex'        => $item['sex'],
                 'ip'         => $item['ip'],
                 'ctime'      => format_date($item['created_time']),
